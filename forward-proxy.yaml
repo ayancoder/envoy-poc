@@ -43,17 +43,6 @@ static_resources:
               dns_cache_config:
                 name: dynamic_forward_proxy_cache_config
                 dns_lookup_family: V4_ONLY
-                typed_dns_resolver_config:
-                  name: envoy.network.dns_resolver.apple
-                  typed_config:                        
-                    "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.apple.v3.AppleDnsResolverConfig
-                    resolvers:
-                    - socket_address:
-                        address: "8.8.8.8"
-                        port_value: 53
-                    dns_resolver_options:
-                      use_tcp_for_dns_lookups: true
-                      no_default_search_domain: true
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -67,21 +56,10 @@ static_resources:
         dns_cache_config:
           name: dynamic_forward_proxy_cache_config
           dns_lookup_family: V4_ONLY
-          typed_dns_resolver_config:
-            name: envoy.network.dns_resolver.apple
-            typed_config:
-              "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.apple.v3.AppleDnsResolverConfig
-              resolvers:
-              - socket_address:
-                  address: "8.8.8.8"
-                  port_value: 53
-              dns_resolver_options:
-                use_tcp_for_dns_lookups: true
-                no_default_search_domain: true
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
         common_tls_context:
           validation_context:
-            trusted_ca: {filename: /etc/ssl/certs/ca-certificates.crt}
+            trusted_ca: {filename: /usr/local/Cellar/ca-certificates/2021-10-26/share/ca-certificates/cacert.pem}

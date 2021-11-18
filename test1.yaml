@@ -1,0 +1,41 @@
+static_resources:
+  listeners:
+  - address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8081
+    listener_filters:
+      name: envoy.listener.original_dst
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          tracing:
+            operation_name: egress
+          codec_type: auto
+          stat_prefix: egress_http
+          route_config:
+            name: local_egress_route
+            virtual_hosts:
+            - name: outbound-vh
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: outbound-cluster
+                retry_policy:
+                  retry_on: 5xx
+                  num_retries: 3
+                decorator:
+                  operation: outbound-proxy
+          http_filters:
+          - name: envoy.router
+            config: {}
+  clusters:
+  - name: outbound-cluster
+    connect_timeout: 1s
+    type: original_dst
+    lb_policy: original_dst_lb
+    cleanup_interval_ms: 60000
